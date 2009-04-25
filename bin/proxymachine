@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+
+require 'optparse'
+require 'proxymachine'
+
+begin
+  options = {:host => "0.0.0.0", :port => 5432}
+
+  opts = OptionParser.new do |opts|
+    opts.banner = <<-EOF
+  Usage:
+    proxymachine -c <config file> [-h <host>] [-p <port>]
+
+  Options:
+EOF
+
+    opts.on("-cCONFIG", "--config CONFIG", "Configuration file") do |x|
+      options[:config] = x
+    end
+
+    opts.on("-hHOST", "--host HOST", "Hostname to bind. Default 0.0.0.0") do |x|
+      options[:host] = x
+    end
+
+    opts.on("-pPORT", "--port PORT", "Port to listen on. Default 5432") do |x|
+      options[:host] = x
+    end
+  end
+
+  opts.parse!
+
+  load(options[:config])
+  ProxyMachine.run
+rescue Exception => e
+  if e.instance_of?(SystemExit)
+    raise
+  else
+    puts 'Uncaught exception'
+    puts e.message
+    puts e.backtrace.join("\n")
+  end
+end

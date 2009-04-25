@@ -1,8 +1,8 @@
 module EventMachine
   module Protocols
     class ServerConnection < Connection
-      def self.request(client_side)
-        EventMachine.connect("localhost", 3000, self) do |c|
+      def self.request(host, port, client_side)
+        EventMachine.connect(host, port, self) do |c|
           # According to the docs, we will get here AFTER post_init is called.
           c.set_client_side(client_side)
         end

@@ -6,12 +6,23 @@ module EventMachine
       end
 
       def post_init
-        @server_side = ServerConnection.request(self)
+        @data = []
       end
 
       def receive_data(data)
-        p data
-        @server_side.send_data(data)
+        if @server_side
+          p data
+          @server_side.send_data(data)
+        else
+          op = ProxyMachine.router.call('', 0, data)
+          if op.instance_of?(String)
+            m, host, port = *op.match(/^(.+):(.+)$/)
+            @server_side = ServerConnection.request(host, port.to_i, self)
+            @server_side.send_data(data)
+          else
+            @data << data
+          end
+        end
       end
     end
   end
