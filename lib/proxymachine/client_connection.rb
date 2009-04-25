@@ -8,30 +8,58 @@ module EventMachine
 
       def post_init
         @buffer = []
+        @tries = 0
         ProxyMachine.incr
       end
 
       def receive_data(data)
-        unless @server_side
-          op = ProxyMachine.router.call('', 0, data)
-          if op.instance_of?(String)
-            m, host, port = *op.match(/^(.+):(.+)$/)
-            @server_side = ServerConnection.request(host, port.to_i, self)
-            send_and_clear_buffer
-          elsif op == :noop
-            @buffer << data
-          else
-            # close
-          end
-        end
-
-        if @server_side
+        if !@server_side
+          @buffer << data
+          ensure_server_side_connection
+        else @server_side
           # p data
           @server_side.send_data(data)
         end
       rescue => e
         close_connection
-        puts e.message
+        puts "#{e.class} - #{e.message}"
+      end
+
+      def ensure_server_side_connection
+        @timer.cancel if @timer
+        unless @server_side
+          op = ProxyMachine.router.call('', 0, @buffer.join)
+          if op.instance_of?(String)
+            m, host, port = *op.match(/^(.+):(.+)$/)
+            if try_server_connect(host, port.to_i)
+              send_and_clear_buffer
+            end
+          elsif op == :noop
+            # do nothing
+          else
+            close_connection
+          end
+        end
+      end
+
+      def try_server_connect(host, port)
+        @server_side = ServerConnection.request(host, port, self)
+        if @tries > 0
+          puts "Successful connection."
+        end
+        true
+      rescue => e
+        if @tries < 10
+          @tries += 1
+          puts "Failed on server connect attempt #{@tries}. Trying again..."
+          @timer.cancel if @timer
+          @timer = EventMachine::Timer.new(0.1) do
+            self.ensure_server_side_connection
+          end
+        else
+          puts "Failed after ten connection attempts."
+        end
+        false
       end
 
       def send_and_clear_buffer
