@@ -1,7 +1,0 @@
-= proxymachine
-
-Description goes here.
-
-== Copyright
-
-Copyright (c) 2009 Tom Preston-Werner. See LICENSE for details.
