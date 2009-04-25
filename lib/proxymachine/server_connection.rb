@@ -13,8 +13,12 @@ module EventMachine
       end
 
       def receive_data(data)
-        p data
+        # p data
         @client_side.send_data(data)
+      end
+
+      def unbind
+        @client_side.close_connection
       end
     end
   end

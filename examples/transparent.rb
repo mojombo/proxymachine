@@ -1,3 +1,3 @@
 proxy do
-  "localhost:3000"
+  "github.dev:80"
 end
