@@ -2,13 +2,10 @@ module EventMachine
   module Protocols
     class ServerConnection < Connection
       def self.request(host, port, client_side)
-        EventMachine.connect(host, port, self) do |c|
-          # According to the docs, we will get here AFTER post_init is called.
-          c.set_client_side(client_side)
-        end
+        EventMachine.connect(host, port, self, client_side)
       end
 
-      def set_client_side(conn)
+      def initialize(conn)
         @client_side = conn
       end
 
