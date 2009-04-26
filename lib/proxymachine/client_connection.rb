@@ -28,7 +28,7 @@ module EventMachine
       def ensure_server_side_connection
         @timer.cancel if @timer
         unless @server_side
-          op = ProxyMachine.router.call('', 0, @buffer.join)
+          op = ProxyMachine.router.call(@buffer.join)
           if op.instance_of?(String)
             m, host, port = *op.match(/^(.+):(.+)$/)
             if try_server_connect(host, port.to_i)
