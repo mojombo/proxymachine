@@ -5,16 +5,20 @@ require 'proxymachine/client_connection'
 require 'proxymachine/server_connection'
 
 class ProxyMachine
+  def self.log(str)
+    puts str if false
+  end
+
   def self.incr
     @@counter ||= 0
     @@counter += 1
-    puts @@counter
+    log @@counter
   end
 
   def self.decr
     @@counter ||= 0
     @@counter -= 1
-    puts @@counter
+    log @@counter
   end
 
   def self.set_router(block)
