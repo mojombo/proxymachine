@@ -11,6 +11,18 @@ ProxyMachine is a simple content aware TCP routing proxy built on EventMachine
 that lets you configure the routing logic in Ruby.
 
 
+Running
+-------
+
+    Usage:
+      proxymachine -c <config file> [-h <host>] [-p <port>]
+
+    Options:
+      -c, --config CONFIG              Configuration file
+      -h, --host HOST                  Hostname to bind. Default 0.0.0.0
+      -p, --port PORT                  Port to listen on. Default 5432
+
+
 Example routing config file
 ---------------------------
 
