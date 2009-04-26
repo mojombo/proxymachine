@@ -29,9 +29,9 @@ class ProxyMachine
     @@router
   end
 
-  def self.run
+  def self.run(host, port)
     EM.run do
-      EventMachine::Protocols::ClientConnection.start
+      EventMachine::Protocols::ClientConnection.start(host, port)
     end
   end
 end

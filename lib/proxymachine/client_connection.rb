@@ -1,9 +1,9 @@
 module EventMachine
   module Protocols
     class ClientConnection < Connection
-      def self.start
-        EM.start_server("localhost", 5432, self)
-        puts "Listening"
+      def self.start(host, port)
+        EM.start_server(host, port, self)
+        puts "Listening on #{host}:#{port}"
       end
 
       def post_init
