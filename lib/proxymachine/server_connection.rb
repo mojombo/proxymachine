@@ -18,7 +18,7 @@ module EventMachine
       end
 
       def unbind
-        @client_side.close_connection
+        @client_side.close_connection_after_writing
       end
     end
   end

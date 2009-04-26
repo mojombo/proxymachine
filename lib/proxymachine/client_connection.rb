@@ -73,7 +73,7 @@ module EventMachine
       end
 
       def unbind
-        @server_side.close_connection if @server_side
+        @server_side.close_connection_after_writing if @server_side
         ProxyMachine.decr
       end
     end
