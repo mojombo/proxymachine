@@ -30,6 +30,9 @@ class ProxyMachine
   end
 
   def self.run(host, port)
+    EM.kqueue
+    EM.epoll
+
     EM.run do
       EventMachine::Protocols::ClientConnection.start(host, port)
     end
