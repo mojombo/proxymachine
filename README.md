@@ -11,8 +11,11 @@ it is released as 1.0.
 Description
 -----------
 
-ProxyMachine is a simple content aware TCP routing proxy built on EventMachine
-that lets you configure the routing logic in Ruby.
+ProxyMachine is a simple content aware (layer 7) TCP routing proxy built on
+EventMachine that lets you configure the routing logic in Ruby.
+
+If you need to proxy connections to different backend servers depending on the
+contents of the transmission, then ProxyMachine will make your life easy!
 
 The idea here is simple. For each client connection, start receiving data
 chunks and placing them into a buffer. Each time a new chunk arrives, send the
