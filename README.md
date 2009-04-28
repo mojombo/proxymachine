@@ -71,6 +71,27 @@ Example routing config file
     end
 
 
+Contribute
+----------
+
+If you'd like to hack on ProxyMachine, start by forking my repo on GitHub:
+
+http://github.com/mojombo/proxymachine
+
+To get all of the dependencies, install the gem first. The best way to get
+your changes merged back into core is as follows:
+
+1. Clone down your fork
+1. Create a topic branch to contain your change
+1. Hack away
+1. Add tests and make sure everything still passes by running `rake`
+1. If you are adding new functionality, document it in the README.md
+1. Do not change the version number, I will do that on my end
+1. If necessary, rebase your commits into logical chunks, without errors
+1. Push the branch up to GitHub
+1. Send me (mojombo) a pull request for your branch
+
+
 Copyright
 ---------
 
