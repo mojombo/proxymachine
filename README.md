@@ -27,6 +27,12 @@ straight proxy. This bidirectional proxy continues to exist until with the
 client or backend close the connection.
 
 
+Installation
+------------
+
+    gem install mojombo-proxymachine -s http://gems.github.com
+
+
 Running
 -------
 
