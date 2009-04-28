@@ -1,3 +1,4 @@
 proxy do |data|
-  "github.dev:80"
+  p data
+  "localhost:80"
 end
