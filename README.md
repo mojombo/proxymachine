@@ -3,6 +3,10 @@ ProxyMachine
 
 By Tom Preston-Werner (tom@mojombo.com)
 
+WARNING: This software is beta and should not be used in production without
+extensive testing. You should not consider this project production ready until
+it is released as 1.0.
+
 
 Description
 -----------
