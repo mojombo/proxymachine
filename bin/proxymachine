@@ -25,7 +25,7 @@ EOF
     end
 
     opts.on("-pPORT", "--port PORT", "Port to listen on. Default 5432") do |x|
-      options[:host] = x
+      options[:port] = x
     end
   end
 
