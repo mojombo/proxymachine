@@ -77,10 +77,10 @@ Example routing config file
 Valid return values
 -------------------
 
-`String` - The host:port of the backend server that will be proxied.
-`:noop` - Do nothing.
-`:close` - Close the connection.
-`{:close => String}` - Close the connection after sending the String.
+`String` - The host:port of the backend server that will be proxied.  
+`:noop` - Do nothing.  
+`:close` - Close the connection.  
+`{:close => String}` - Close the connection after sending the String.  
 
 
 Contribute
