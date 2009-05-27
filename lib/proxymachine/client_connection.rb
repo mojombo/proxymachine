@@ -34,6 +34,9 @@ module EventMachine
             if try_server_connect(host, port.to_i)
               send_and_clear_buffer
             end
+          elsif op.instance_of?(Hash) && op[:close]
+            send_data(op[:close])
+            close_connection_after_writing
           elsif op == :noop
             # do nothing
           else
