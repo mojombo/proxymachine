@@ -2,31 +2,34 @@
 
 Gem::Specification.new do |s|
   s.name = %q{proxymachine}
-  s.version = "0.1.2"
+  s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Preston-Werner"]
-  s.date = %q{2009-04-28}
+  s.date = %q{2009-05-27}
   s.default_executable = %q{proxymachine}
   s.email = %q{tom@mojombo.com}
   s.executables = ["proxymachine"]
   s.extra_rdoc_files = [
     "LICENSE",
-    "README.md"
+     "README.md"
   ]
   s.files = [
-    "LICENSE",
-    "README.md",
-    "Rakefile",
-    "VERSION.yml",
-    "bin/proxymachine",
-    "examples/git.rb",
-    "examples/transparent.rb",
-    "lib/proxymachine.rb",
-    "lib/proxymachine/client_connection.rb",
-    "lib/proxymachine/server_connection.rb",
-    "test/proxymachine_test.rb",
-    "test/test_helper.rb"
+    ".document",
+     ".gitignore",
+     "LICENSE",
+     "README.md",
+     "Rakefile",
+     "VERSION.yml",
+     "bin/proxymachine",
+     "examples/git.rb",
+     "examples/transparent.rb",
+     "lib/proxymachine.rb",
+     "lib/proxymachine/client_connection.rb",
+     "lib/proxymachine/server_connection.rb",
+     "proxymachine.gemspec",
+     "test/proxymachine_test.rb",
+     "test/test_helper.rb"
   ]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/mojombo/proxymachine}
@@ -36,9 +39,9 @@ Gem::Specification.new do |s|
   s.summary = %q{TODO}
   s.test_files = [
     "test/proxymachine_test.rb",
-    "test/test_helper.rb",
-    "examples/git.rb",
-    "examples/transparent.rb"
+     "test/test_helper.rb",
+     "examples/git.rb",
+     "examples/transparent.rb"
   ]
 
   if s.respond_to? :specification_version then
