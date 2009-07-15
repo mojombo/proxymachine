@@ -19,8 +19,8 @@ end
 proxy do |data|
   if data =~ %r{^....git-upload-pack /([\w\.\-]+)/[\w\.\-]+\000host=(.+)\000}
     name, host = $1, $2
-    GitRouter.lookup(name)
+    { :remote => GitRouter.lookup(name) }
   else
-    :noop
+    { :noop => true }
   end
 end

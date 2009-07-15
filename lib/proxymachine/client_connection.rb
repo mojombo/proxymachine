@@ -28,16 +28,24 @@ module EventMachine
       def ensure_server_side_connection
         @timer.cancel if @timer
         unless @server_side
-          op = ProxyMachine.router.call(@buffer.join)
-          if op.instance_of?(String)
-            m, host, port = *op.match(/^(.+):(.+)$/)
+          commands = ProxyMachine.router.call(@buffer.join)
+          close_connection unless commands.instance_of?(Hash)
+          if remote = commands[:remote]
+            m, host, port = *remote.match(/^(.+):(.+)$/)
             if try_server_connect(host, port.to_i)
+              if data = commands[:data]
+                @buffer = [data]
+              end
               send_and_clear_buffer
             end
-          elsif op.instance_of?(Hash) && op[:close]
-            send_data(op[:close])
-            close_connection_after_writing
-          elsif op == :noop
+          elsif close = commands[:close]
+            if close == true
+              close_connection
+            else
+              send_data(close)
+              close_connection_after_writing
+            end
+          elsif commands[:noop]
             # do nothing
           else
             close_connection
@@ -68,7 +76,6 @@ module EventMachine
       def send_and_clear_buffer
         if !@buffer.empty?
           @buffer.each do |x|
-            # p x
             @server_side.send_data(x)
           end
           @buffer = []

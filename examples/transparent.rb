@@ -1,4 +1,4 @@
 proxy do |data|
   # p data
-  "localhost:80"
+  { :remote => "google.com:80" }
 end
