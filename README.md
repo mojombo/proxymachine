@@ -26,7 +26,7 @@ correct backend server. If not, it can choose to either do nothing and wait
 for more data to arrive, or close the connection. Once the block returns an
 address, a connection to the backend is made, the buffer is replayed to the
 backend, and the client and backend connections are hooked up to form a
-straight proxy. This bidirectional proxy continues to exist until with the
+straight proxy. This bidirectional proxy continues to exist until either the
 client or backend close the connection.
 
 
@@ -67,9 +67,9 @@ Example routing config file
     proxy do |data|
       if data =~ %r{^....git-upload-pack /([\w\.\-]+)/[\w\.\-]+\000host=\w+\000}
         name = $1
-        GitRouter.lookup(name)
+        { :remote => GitRouter.lookup(name) }
       else
-        :noop
+        { :noop => true }
       end
     end
 
@@ -77,10 +77,11 @@ Example routing config file
 Valid return values
 -------------------
 
-`String` - The host:port of the backend server that will be proxied.  
-`:noop` - Do nothing.  
-`:close` - Close the connection.  
-`{:close => String}` - Close the connection after sending the String.  
+`{ :remote => String }` - String is the host:port of the backend server that will be proxied.  
+`{ :remote => String, :data => String }` - Same as above, but send the given data instead.  
+`{ :noop => true }` - Do nothing.  
+`{ :close` => true } - Close the connection.  
+`{ :close => String }` - Close the connection after sending the String.  
 
 
 Contribute
