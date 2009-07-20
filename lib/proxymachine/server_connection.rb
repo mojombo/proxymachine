@@ -9,9 +9,8 @@ module EventMachine
         @client_side = conn
       end
 
-      def receive_data(data)
-        # p data
-        @client_side.send_data(data)
+      def post_init
+        proxy_incoming_to @client_side
       end
 
       def unbind

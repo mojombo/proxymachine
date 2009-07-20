@@ -16,9 +16,6 @@ module EventMachine
         if !@server_side
           @buffer << data
           ensure_server_side_connection
-        else @server_side
-          # p data
-          @server_side.send_data(data)
         end
       rescue => e
         close_connection
@@ -55,6 +52,7 @@ module EventMachine
 
       def try_server_connect(host, port)
         @server_side = ServerConnection.request(host, port, self)
+        proxy_incoming_to @server_side
         if @tries > 0
           puts "Successful connection."
         end
@@ -85,6 +83,11 @@ module EventMachine
       def unbind
         @server_side.close_connection_after_writing if @server_side
         ProxyMachine.decr
+      end
+
+      # Proxy connection has been lost
+      def proxy_target_unbound
+        @server_side = nil
       end
     end
   end
