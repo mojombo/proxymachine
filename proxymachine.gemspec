@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{proxymachine}
-  s.version = "0.2.2"
+  s.version = "0.2.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Preston-Werner"]
-  s.date = %q{2009-08-07}
+  s.date = %q{2009-08-18}
   s.default_executable = %q{proxymachine}
   s.email = %q{tom@mojombo.com}
   s.executables = ["proxymachine"]
@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{TODO}
+  s.summary = %q{ProxyMachine is a simple content aware (layer 7) TCP routing proxy.}
   s.test_files = [
     "test/proxymachine_test.rb",
      "test/test_helper.rb",
