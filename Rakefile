@@ -5,7 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "proxymachine"
-    gem.summary = %Q{TODO}
+    gem.summary = %Q{ProxyMachine is a simple content aware (layer 7) TCP routing proxy.}
     gem.email = "tom@mojombo.com"
     gem.homepage = "http://github.com/mojombo/proxymachine"
     gem.authors = ["Tom Preston-Werner"]
