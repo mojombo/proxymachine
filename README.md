@@ -33,7 +33,7 @@ client or backend close the connection.
 Installation
 ------------
 
-    gem install mojombo-proxymachine -s http://gems.github.com
+    $ gem install proxymachine -s http://gemcutter.org
 
 
 Running
@@ -63,7 +63,7 @@ Example routing config file
     # header information from the Git protocol is parsed to find the 
     # username and a lookup routine is run on the name to find the correct
     # backend server. If no match can be made yet, do nothing with the
-    # connection yet.
+    # connection.
     proxy do |data|
       if data =~ %r{^....git-upload-pack /([\w\.\-]+)/[\w\.\-]+\000host=\w+\000}
         name = $1
@@ -80,7 +80,7 @@ Valid return values
 `{ :remote => String }` - String is the host:port of the backend server that will be proxied.  
 `{ :remote => String, :data => String }` - Same as above, but send the given data instead.  
 `{ :noop => true }` - Do nothing.  
-`{ :close` => true } - Close the connection.  
+`{ :close => true }` - Close the connection.  
 `{ :close => String }` - Close the connection after sending the String.  
 
 
