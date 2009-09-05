@@ -20,14 +20,15 @@ contents of the transmission, then ProxyMachine will make your life easy!
 The idea here is simple. For each client connection, start receiving data
 chunks and placing them into a buffer. Each time a new chunk arrives, send the
 buffer to a user specified block. The block's job is to parse the buffer to
-determine where the connection should proxied. If the buffer contains enough
-data to make a determination, the block returns the address and port of the
-correct backend server. If not, it can choose to either do nothing and wait
-for more data to arrive, or close the connection. Once the block returns an
-address, a connection to the backend is made, the buffer is replayed to the
-backend, and the client and backend connections are hooked up to form a
-straight proxy. This bidirectional proxy continues to exist until either the
-client or backend close the connection.
+determine where the connection should be proxied. If the buffer contains
+enough data to make a determination, the block returns the address and port of
+the correct backend server. If not, it can choose to do nothing and wait for
+more data to arrive, close the connection, or close the connection after
+sending custom data. Once the block returns an address, a connection to the
+backend is made, the buffer is replayed to the backend, and the client and
+backend connections are hooked up to form a transparent proxy. This
+bidirectional proxy continues to exist until either the client or backend
+close the connection.
 
 
 Installation
