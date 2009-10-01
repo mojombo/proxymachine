@@ -2,8 +2,9 @@ module EventMachine
   module Protocols
     class ClientConnection < Connection
       def self.start(host, port)
-        EM.start_server(host, port, self)
+        $server = EM.start_server(host, port, self)
         puts "Listening on #{host}:#{port}"
+        puts "Send TERM to quit after waiting for all connections to finish."
       end
 
       def post_init

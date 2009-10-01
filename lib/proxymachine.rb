@@ -5,20 +5,24 @@ require 'proxymachine/client_connection'
 require 'proxymachine/server_connection'
 
 class ProxyMachine
-  def self.log(str)
-    puts str if false
+  def self.count
+    @@counter ||= 0
+    @@counter
   end
 
   def self.incr
     @@counter ||= 0
     @@counter += 1
-    log @@counter
   end
 
   def self.decr
     @@counter ||= 0
     @@counter -= 1
-    log @@counter
+    if $server.nil?
+      puts "Waiting for #{@@counter} connections to finish."
+    end
+    EM.stop if $server.nil? and @@counter == 0
+    @@counter
   end
 
   def self.set_router(block)
@@ -34,6 +38,13 @@ class ProxyMachine
 
     EM.run do
       EventMachine::Protocols::ClientConnection.start(host, port)
+      trap('TERM') do
+        EM.stop_server($server) if $server
+        puts "Received TERM signal. No longer accepting new connections."
+        puts "Waiting for #{ProxyMachine.count} connections to finish."
+        $server = nil
+        EM.stop if ProxyMachine.count == 0
+      end
     end
   end
 end
