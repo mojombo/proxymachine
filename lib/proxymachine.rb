@@ -5,6 +5,8 @@ require 'proxymachine/client_connection'
 require 'proxymachine/server_connection'
 
 class ProxyMachine
+  MAX_FAST_SHUTDOWN_SECONDS = 10
+
   def self.count
     @@counter ||= 0
     @@counter
@@ -33,17 +35,40 @@ class ProxyMachine
     @@router
   end
 
+  def self.graceful_shutdown(signal)
+    EM.stop_server($server) if $server
+    puts "Received #{signal} signal. No longer accepting new connections."
+    puts "Waiting for #{ProxyMachine.count} connections to finish."
+    $server = nil
+    EM.stop if ProxyMachine.count == 0
+  end
+
+  def self.fast_shutdown(signal)
+    EM.stop_server($server) if $server
+    puts "Received #{signal} signal. No longer accepting new connections."
+    puts "Maximum time to wait for connections is #{MAX_FAST_SHUTDOWN_SECONDS} seconds."
+    puts "Waiting for #{ProxyMachine.count} connections to finish."
+    $server = nil
+    EM.stop if ProxyMachine.count == 0
+    Thread.new do
+      sleep MAX_FAST_SHUTDOWN_SECONDS
+      exit!
+    end
+  end
+
   def self.run(host, port)
     EM.epoll
 
     EM.run do
       EventMachine::Protocols::ClientConnection.start(host, port)
       trap('QUIT') do
-        EM.stop_server($server) if $server
-        puts "Received QUIT signal. No longer accepting new connections."
-        puts "Waiting for #{ProxyMachine.count} connections to finish."
-        $server = nil
-        EM.stop if ProxyMachine.count == 0
+        self.graceful_shutdown('QUIT')
+      end
+      trap('TERM') do
+        self.fast_shutdown('TERM')
+      end
+      trap('INT') do
+        self.fast_shutdown('INT')
       end
     end
   end

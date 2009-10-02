@@ -4,7 +4,8 @@ module EventMachine
       def self.start(host, port)
         $server = EM.start_server(host, port, self)
         puts "Listening on #{host}:#{port}"
-        puts "Send TERM to quit after waiting for all connections to finish."
+        puts "Send QUIT to quit after waiting for all connections to finish."
+        puts "Send TERM or INT to quit after waiting for up to 10 seconds for connections to finish."
       end
 
       def post_init

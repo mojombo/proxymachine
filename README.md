@@ -52,9 +52,14 @@ Running
 Signals
 -------
 
-    QUIT - Exit ProxyMachine after waiting for all connections to finish.
-           Useful for gracefully restarting a proxymachine without killing
-           any connections.
+    QUIT - Graceful shutdown. Stop accepting connections immediately and
+           wait as long as necessary for all connections to close.
+
+    TERM - Fast shutdown. Stop accepting connections immediately and wait
+           up to 10 seconds for connections to close before forcing
+           termination.
+
+    INT  - Same as TERM
 
 
 Example routing config file
