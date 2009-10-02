@@ -38,9 +38,9 @@ class ProxyMachine
 
     EM.run do
       EventMachine::Protocols::ClientConnection.start(host, port)
-      trap('TERM') do
+      trap('QUIT') do
         EM.stop_server($server) if $server
-        puts "Received TERM signal. No longer accepting new connections."
+        puts "Received QUIT signal. No longer accepting new connections."
         puts "Waiting for #{ProxyMachine.count} connections to finish."
         $server = nil
         EM.stop if ProxyMachine.count == 0

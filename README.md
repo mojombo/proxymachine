@@ -52,7 +52,7 @@ Running
 Signals
 -------
 
-    TERM - Exit ProxyMachine after waiting for all connections to finish.
+    QUIT - Exit ProxyMachine after waiting for all connections to finish.
            Useful for gracefully restarting a proxymachine without killing
            any connections.
 
