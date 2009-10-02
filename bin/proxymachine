@@ -32,7 +32,8 @@ EOF
   opts.parse!
 
   load(options[:config])
-  ProxyMachine.run(options[:host], options[:port])
+  name = options[:config].split('/').last.chomp('.rb')
+  ProxyMachine.run(name, options[:host], options[:port])
 rescue Exception => e
   if e.instance_of?(SystemExit)
     raise

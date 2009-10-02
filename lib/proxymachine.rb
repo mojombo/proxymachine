@@ -7,22 +7,30 @@ require 'proxymachine/server_connection'
 class ProxyMachine
   MAX_FAST_SHUTDOWN_SECONDS = 10
 
+  def self.update_procline
+    $0 = "#{self.name} proxymachine: #{self.count} connections"
+  end
+
+  def self.name
+    @@name
+  end
+
   def self.count
-    @@counter ||= 0
     @@counter
   end
 
   def self.incr
-    @@counter ||= 0
     @@counter += 1
+    self.update_procline
+    @@counter
   end
 
   def self.decr
-    @@counter ||= 0
     @@counter -= 1
     if $server.nil?
       puts "Waiting for #{@@counter} connections to finish."
     end
+    self.update_procline
     EM.stop if $server.nil? and @@counter == 0
     @@counter
   end
@@ -56,7 +64,10 @@ class ProxyMachine
     end
   end
 
-  def self.run(host, port)
+  def self.run(name, host, port)
+    @@counter = 0
+    @@name = name
+    self.update_procline
     EM.epoll
 
     EM.run do
