@@ -54,7 +54,7 @@ module EventMachine
 
       def try_server_connect(host, port)
         @server_side = ServerConnection.request(host, port, self)
-        proxy_incoming_to @server_side
+        proxy_incoming_to(@server_side, 10240)
         if @tries > 0
           puts "Successful connection."
         end

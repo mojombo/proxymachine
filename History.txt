@@ -1,0 +1,3 @@
+=
+  * Minor changes
+    * Use a 10k buffer to prevent memory growth due to slow clients

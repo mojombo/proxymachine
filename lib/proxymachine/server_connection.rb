@@ -10,7 +10,7 @@ module EventMachine
       end
 
       def post_init
-        proxy_incoming_to @client_side
+        proxy_incoming_to(@client_side, 10240)
       end
 
       def unbind
