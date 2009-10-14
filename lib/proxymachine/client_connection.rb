@@ -14,6 +14,14 @@ module EventMachine
         ProxyMachine.incr
       end
 
+      def peer
+        @peer ||=
+        begin
+          port, ip = Socket.unpack_sockaddr_in(get_peername)
+          "#{ip}:#{port}"
+        end
+      end
+
       def receive_data(data)
         if !@server_side
           @buffer << data
@@ -28,6 +36,7 @@ module EventMachine
         @timer.cancel if @timer
         unless @server_side
           commands = ProxyMachine.router.call(@buffer.join)
+          puts "#{peer} #{commands.inspect}"
           close_connection unless commands.instance_of?(Hash)
           if remote = commands[:remote]
             m, host, port = *remote.match(/^(.+):(.+)$/)
