@@ -8,7 +8,7 @@ class ProxyMachine
   MAX_FAST_SHUTDOWN_SECONDS = 10
 
   def self.update_procline
-    $0 = "proxymachine #{VERSION} - #{@@name} #{@@listen} - #{self.count} connections"
+    $0 = "proxymachine #{VERSION} - #{@@name} #{@@listen} - #{self.count}/#{@@totalcounter} connections"
   end
 
   def self.count
@@ -16,6 +16,7 @@ class ProxyMachine
   end
 
   def self.incr
+    @@totalcounter += 1
     @@counter += 1
     self.update_procline
     @@counter
@@ -61,6 +62,7 @@ class ProxyMachine
   end
 
   def self.run(name, host, port)
+    @@totalcounter = 0
     @@counter = 0
     @@name = name
     @@listen = "#{host}:#{port}"
