@@ -1,3 +1,8 @@
+=
+  * Minor changes
+    * Always log proxy connection
+    * Add version and total connection count to procline
+
 = 0.2.7 / 2009-10-12
   * Minor changes
     * Use a 10k buffer to prevent memory growth due to slow clients
