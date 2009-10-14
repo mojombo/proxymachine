@@ -8,7 +8,7 @@ class ProxyMachine
   MAX_FAST_SHUTDOWN_SECONDS = 10
 
   def self.update_procline
-    $0 = "proxymachine - #{@@name} #{@@listen} - #{self.count} connections"
+    $0 = "proxymachine #{VERSION} - #{@@name} #{@@listen} - #{self.count} connections"
   end
 
   def self.count
@@ -80,6 +80,15 @@ class ProxyMachine
       end
     end
   end
+
+  def self.version
+    yml = YAML.load(File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION.yml])))
+    "#{yml[:major]}.#{yml[:minor]}.#{yml[:patch]}"
+  rescue
+    'unknown'
+  end
+
+  VERSION = self.version
 end
 
 module Kernel
