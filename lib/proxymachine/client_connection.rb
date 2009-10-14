@@ -3,12 +3,13 @@ module EventMachine
     class ClientConnection < Connection
       def self.start(host, port)
         $server = EM.start_server(host, port, self)
-        puts "Listening on #{host}:#{port}"
-        puts "Send QUIT to quit after waiting for all connections to finish."
-        puts "Send TERM or INT to quit after waiting for up to 10 seconds for connections to finish."
+        LOGGER.info "Listening on #{host}:#{port}"
+        LOGGER.info "Send QUIT to quit after waiting for all connections to finish."
+        LOGGER.info "Send TERM or INT to quit after waiting for up to 10 seconds for connections to finish."
       end
 
       def post_init
+        LOGGER.info "Accepted #{peer}"
         @buffer = []
         @tries = 0
         ProxyMachine.incr
@@ -29,14 +30,14 @@ module EventMachine
         end
       rescue => e
         close_connection
-        puts "#{e.class} - #{e.message}"
+        LOGGER.info "#{e.class} - #{e.message}"
       end
 
       def ensure_server_side_connection
         @timer.cancel if @timer
         unless @server_side
           commands = ProxyMachine.router.call(@buffer.join)
-          puts "#{peer} #{commands.inspect}"
+          LOGGER.info "#{peer} #{commands.inspect}"
           close_connection unless commands.instance_of?(Hash)
           if remote = commands[:remote]
             m, host, port = *remote.match(/^(.+):(.+)$/)
@@ -64,18 +65,18 @@ module EventMachine
       def try_server_connect(host, port)
         @server_side = ServerConnection.request(host, port, self)
         proxy_incoming_to(@server_side, 10240)
-        puts "Successful connection to #{host}:#{port}."
+        LOGGER.info "Successful connection to #{host}:#{port}."
         true
       rescue => e
         if @tries < 10
           @tries += 1
-          puts "Failed on server connect attempt #{@tries}. Trying again..."
+          LOGGER.info "Failed on server connect attempt #{@tries}. Trying again..."
           @timer.cancel if @timer
           @timer = EventMachine::Timer.new(0.1) do
             self.ensure_server_side_connection
           end
         else
-          puts "Failed after ten connection attempts."
+          LOGGER.info "Failed after ten connection attempts."
         end
         false
       end

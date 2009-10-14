@@ -1,8 +1,11 @@
 require 'rubygems'
 require 'eventmachine'
+require 'logger'
 
 require 'proxymachine/client_connection'
 require 'proxymachine/server_connection'
+
+LOGGER = Logger.new(STDOUT)
 
 class ProxyMachine
   MAX_FAST_SHUTDOWN_SECONDS = 10
@@ -30,7 +33,7 @@ class ProxyMachine
   def self.decr
     @@counter -= 1
     if $server.nil?
-      puts "Waiting for #{@@counter} connections to finish."
+      LOGGER.info "Waiting for #{@@counter} connections to finish."
     end
     self.update_procline
     EM.stop if $server.nil? and @@counter == 0
@@ -47,17 +50,17 @@ class ProxyMachine
 
   def self.graceful_shutdown(signal)
     EM.stop_server($server) if $server
-    puts "Received #{signal} signal. No longer accepting new connections."
-    puts "Waiting for #{ProxyMachine.count} connections to finish."
+    LOGGER.info "Received #{signal} signal. No longer accepting new connections."
+    LOGGER.info "Waiting for #{ProxyMachine.count} connections to finish."
     $server = nil
     EM.stop if ProxyMachine.count == 0
   end
 
   def self.fast_shutdown(signal)
     EM.stop_server($server) if $server
-    puts "Received #{signal} signal. No longer accepting new connections."
-    puts "Maximum time to wait for connections is #{MAX_FAST_SHUTDOWN_SECONDS} seconds."
-    puts "Waiting for #{ProxyMachine.count} connections to finish."
+    LOGGER.info "Received #{signal} signal. No longer accepting new connections."
+    LOGGER.info "Maximum time to wait for connections is #{MAX_FAST_SHUTDOWN_SECONDS} seconds."
+    LOGGER.info "Waiting for #{ProxyMachine.count} connections to finish."
     $server = nil
     EM.stop if ProxyMachine.count == 0
     Thread.new do

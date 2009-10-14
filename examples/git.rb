@@ -6,7 +6,7 @@ class GitRouter
   # Look at the routing table and return the correct address for +name+
   # Returns "<host>:<port>" e.g. "ae8f31c.example.com:9418"
   def self.lookup(name)
-    puts "Proxying for user #{name}"
+    LOGGER.info "Proxying for user #{name}"
     "localhost:9418"
   end
 end

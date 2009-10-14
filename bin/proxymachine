@@ -38,8 +38,8 @@ rescue Exception => e
   if e.instance_of?(SystemExit)
     raise
   else
-    puts 'Uncaught exception'
-    puts e.message
-    puts e.backtrace.join("\n")
+    LOGGER.info 'Uncaught exception'
+    LOGGER.info e.message
+    LOGGER.info e.backtrace.join("\n")
   end
 end
