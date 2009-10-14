@@ -3,6 +3,7 @@
     * Always log proxy connection
     * Add version and total connection count to procline
     * Add max connection count to procline
+    * Use Logger for logging
 
 = 0.2.7 / 2009-10-12
   * Minor changes
