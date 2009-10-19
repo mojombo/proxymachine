@@ -3,10 +3,6 @@ ProxyMachine
 
 By Tom Preston-Werner (tom@mojombo.com)
 
-WARNING: This software is alpha and should not be used in production without
-extensive testing. You should not consider this project production ready until
-it is released as 1.0.
-
 
 Description
 -----------
@@ -29,6 +25,8 @@ backend is made, the buffer is replayed to the backend, and the client and
 backend connections are hooked up to form a transparent proxy. This
 bidirectional proxy continues to exist until either the client or backend
 close the connection.
+
+ProxyMachine was developed for GitHub's federated architecture and is successfully used in production to proxy millions of requests every day. The performance and memory profile have both proven to be excellent.
 
 
 Installation
