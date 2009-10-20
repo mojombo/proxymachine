@@ -1,3 +1,6 @@
+= 1.0.0 / 2009-10-19
+  * No changes. Production ready!
+
 = 0.2.8 / 2009-10-14
   * Minor changes
     * Always log proxy connection
