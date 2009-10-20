@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{proxymachine}
-  s.version = "0.2.8"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Preston-Werner"]
-  s.date = %q{2009-10-14}
+  s.date = %q{2009-10-19}
   s.default_executable = %q{proxymachine}
   s.email = %q{tom@mojombo.com}
   s.executables = ["proxymachine"]
@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
      "lib/proxymachine/client_connection.rb",
      "lib/proxymachine/server_connection.rb",
      "proxymachine.gemspec",
+     "test/configs/simple.rb",
      "test/proxymachine_test.rb",
      "test/test_helper.rb"
   ]
@@ -42,7 +43,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{ProxyMachine is a simple content aware (layer 7) TCP routing proxy.}
   s.test_files = [
-    "test/proxymachine_test.rb",
+    "test/configs/simple.rb",
+     "test/proxymachine_test.rb",
      "test/test_helper.rb",
      "examples/git.rb",
      "examples/long.rb",
