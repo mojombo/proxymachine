@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'eventmachine'
 require 'logger'
+require 'socket'
 
 require 'proxymachine/client_connection'
 require 'proxymachine/server_connection'
