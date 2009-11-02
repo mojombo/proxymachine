@@ -7,7 +7,7 @@ require 'proxymachine/server_connection'
 
 LOGGER = Logger.new(STDOUT)
 
-class ProxyMachine
+module ProxyMachine
   MAX_FAST_SHUTDOWN_SECONDS = 10
 
   def self.update_procline
@@ -79,7 +79,7 @@ class ProxyMachine
     EM.epoll
 
     EM.run do
-      EventMachine::Protocols::ClientConnection.start(host, port)
+      ProxyMachine::ClientConnection.start(host, port)
       trap('QUIT') do
         self.graceful_shutdown('QUIT')
       end
