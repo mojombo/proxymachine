@@ -1,4 +1,4 @@
-module ProxyMachine
+class ProxyMachine
   class ClientConnection < EventMachine::Connection
     def self.start(host, port)
       $server = EM.start_server(host, port, self)

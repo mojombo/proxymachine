@@ -1,4 +1,4 @@
-module ProxyMachine
+class ProxyMachine
   class ServerConnection < EventMachine::Connection
     def self.request(host, port, client_side)
       EventMachine.connect(host, port, self, client_side)

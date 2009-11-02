@@ -8,7 +8,7 @@ require 'proxymachine/server_connection'
 
 LOGGER = Logger.new(STDOUT)
 
-module ProxyMachine
+class ProxyMachine
   MAX_FAST_SHUTDOWN_SECONDS = 10
 
   def self.update_procline
