@@ -26,7 +26,9 @@ backend connections are hooked up to form a transparent proxy. This
 bidirectional proxy continues to exist until either the client or backend
 close the connection.
 
-ProxyMachine was developed for GitHub's federated architecture and is successfully used in production to proxy millions of requests every day. The performance and memory profile have both proven to be excellent.
+ProxyMachine was developed for GitHub's federated architecture and is
+successfully used in production to proxy millions of requests every day. The
+performance and memory profile have both proven to be excellent.
 
 
 Installation
