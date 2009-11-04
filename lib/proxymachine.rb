@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'eventmachine'
 require 'logger'
+require 'socket'
 
 require 'proxymachine/client_connection'
 require 'proxymachine/server_connection'
@@ -79,7 +80,7 @@ class ProxyMachine
     EM.epoll
 
     EM.run do
-      EventMachine::Protocols::ClientConnection.start(host, port)
+      ProxyMachine::ClientConnection.start(host, port)
       trap('QUIT') do
         self.graceful_shutdown('QUIT')
       end
