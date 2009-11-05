@@ -1,3 +1,12 @@
+= 1.1.0 / 2009-11-05
+  * New Features
+    * Add { :remote, :data, :reply } command [github.com/coderrr]
+  * Minor Changes
+    * Namespace connection classes under ProxyMachine instead of EM [github.com/cmelbye]
+    * Require socket [github.com/cmelbye]
+    * Up EM dep to 0.12.10
+    * Add SOCKS4 Proxy example [github.com/coderrr]
+
 = 1.0.0 / 2009-10-19
   * No changes. Production ready!
 
