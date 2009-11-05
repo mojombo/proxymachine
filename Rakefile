@@ -9,7 +9,7 @@ begin
     gem.email = "tom@mojombo.com"
     gem.homepage = "http://github.com/mojombo/proxymachine"
     gem.authors = ["Tom Preston-Werner"]
-    gem.add_dependency('eventmachine', '>= 0.12.9')
+    gem.add_dependency('eventmachine', '>= 0.12.10')
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
