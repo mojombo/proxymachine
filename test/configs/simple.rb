@@ -13,6 +13,8 @@ proxy do |data|
     { :noop => true }
   elsif data == 'e' * 2048 + 'f'
     { :remote => "localhost:9980" }
+  elsif data == 'g'
+    { :remote => "localhost:9980", :data => 'g2', :reply => 'g3-' }
   else
     { :close => true }
   end

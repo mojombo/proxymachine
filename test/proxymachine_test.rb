@@ -28,6 +28,10 @@ class ProxymachineTest < Test::Unit::TestCase
     assert_proxy('localhost', 9990, 'd', 'ddd')
   end
 
+  should "handle data plus reply" do
+    assert_proxy('localhost', 9990, 'g', 'g3-9980:g2')
+  end
+
   should "handle noop" do
     sock = TCPSocket.new('localhost', 9990)
     sock.write('e' * 2048)
