@@ -44,6 +44,9 @@ class ProxyMachine
             if data = commands[:data]
               @buffer = [data]
             end
+            if reply = commands[:reply]
+              send_data(reply)
+            end
             send_and_clear_buffer
           end
         elsif close = commands[:close]
