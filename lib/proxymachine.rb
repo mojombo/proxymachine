@@ -70,12 +70,21 @@ class ProxyMachine
     end
   end
 
+  def self.set_connect_error_callback(&block)
+    @@connect_error_callback = block
+  end
+
+  def self.connect_error_callback
+    @@connect_error_callback
+  end
+
   def self.run(name, host, port)
     @@totalcounter = 0
     @@maxcounter = 0
     @@counter = 0
     @@name = name
     @@listen = "#{host}:#{port}"
+    @@connect_error_callback ||= proc { |remote| }
     self.update_procline
     EM.epoll
 
@@ -106,5 +115,9 @@ end
 module Kernel
   def proxy(&block)
     ProxyMachine.set_router(block)
+  end
+
+  def proxy_connect_error(&block)
+    ProxyMachine.set_connect_error_callback(&block)
   end
 end

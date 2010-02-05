@@ -112,6 +112,30 @@ Valid return values
 `{ :close => true }` - Close the connection.  
 `{ :close => String }` - Close the connection after sending the String.  
 
+Connection Errors and Timeouts
+------------------------------
+
+It's possible to register a custom callback for handling connection
+errors. The callback is passed the remote when a connection is either
+rejected or a connection timeout occurs:
+
+    proxy do |data|
+      if data =~ /your thing/
+        { :remote => 'localhost:1234', :connect_timeout => 1.0 }
+      else
+        { :noop => true }
+      end
+    end
+
+    proxy_connect_error |remote|
+      puts "error connecting to #{remote}"
+    end
+
+You must provide a `:connect_timeout` value in the `proxy` return value
+to enable connection timeouts. The `:connect_timeout` value is a float
+representing the number of seconds to wait before a connection is
+established. Hard connection rejections always trigger the callback, even
+when no `:connect_timeout` is provided.
 
 Contribute
 ----------

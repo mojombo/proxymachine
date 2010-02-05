@@ -13,6 +13,7 @@ class ProxyMachine
       @remote = nil
       @tries = 0
       @connected = false
+      @connect_timeout = nil
       ProxyMachine.incr
     end
 
@@ -33,7 +34,6 @@ class ProxyMachine
       close_connection
       LOGGER.info "#{e.class} - #{e.message}"
     end
-
 
     # Called when new data is available from the client but no remote
     # server has been established. If a remote can be established, an
@@ -72,6 +72,7 @@ class ProxyMachine
       fail "connect_server called without remote established" if @remote.nil?
       host, port = @remote
       @server_side = ServerConnection.request(host, port, self)
+      @server_side.pending_connect_timeout = @connect_timeout
     end
 
     # Called by the server side immediately after the server connection was
@@ -93,8 +94,9 @@ class ProxyMachine
         @tries += 1
         EM.add_timer(0.1) { connect_to_server }
       else
-        puts "Failed after ten connection attempts."
+        LOGGER.info "Failed after ten connection attempts."
         close_connection
+        ProxyMachine.connect_error_callback.call(@remote.join(':'))
       end
     end
 
