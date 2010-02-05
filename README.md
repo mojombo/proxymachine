@@ -127,7 +127,7 @@ rejected or a connection timeout occurs:
       end
     end
 
-    proxy_connect_error |remote|
+    proxy_connect_error do |remote|
       puts "error connecting to #{remote}"
     end
 
@@ -136,6 +136,24 @@ to enable connection timeouts. The `:connect_timeout` value is a float
 representing the number of seconds to wait before a connection is
 established. Hard connection rejections always trigger the callback, even
 when no `:connect_timeout` is provided.
+
+Inactivity Timeouts
+-------------------
+
+Inactivity timeouts work like connect timeouts but are triggered after
+the configured amount of time elapses without receiving the first byte
+of data from an already connected server:
+
+    proxy do |data|
+      { :remote => 'localhost:1234', :inactivity_timeout => 10.0 }
+    end
+
+    proxy_inactivity_error do |remote|
+      puts "#{remote} did not send any data for 10 seconds"
+    end
+
+If no `:inactivity_timeout` is provided, the `proxy_inactivity_error`
+callback is never triggered.
 
 Contribute
 ----------

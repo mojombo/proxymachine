@@ -14,6 +14,7 @@ class ProxyMachine
       @tries = 0
       @connected = false
       @connect_timeout = nil
+      @inactivity_timeout = nil
       ProxyMachine.incr
     end
 
@@ -52,6 +53,8 @@ class ProxyMachine
         if reply = commands[:reply]
           send_data(reply)
         end
+        @connect_timeout = commands[:connect_timeout]
+        @inactivity_timeout = commands[:inactivity_timeout]
         connect_to_server
       elsif close = commands[:close]
         if close == true
@@ -73,6 +76,7 @@ class ProxyMachine
       host, port = @remote
       @server_side = ServerConnection.request(host, port, self)
       @server_side.pending_connect_timeout = @connect_timeout
+      @server_side.comm_inactivity_timeout = @inactivity_timeout
     end
 
     # Called by the server side immediately after the server connection was
@@ -98,6 +102,12 @@ class ProxyMachine
         close_connection
         ProxyMachine.connect_error_callback.call(@remote.join(':'))
       end
+    end
+
+    def server_inactivity_timeout
+      @server_side = nil
+      close_connection
+      ProxyMachine.inactivity_error_callback.call(@remote.join(':'))
     end
 
     def unbind

@@ -78,6 +78,14 @@ class ProxyMachine
     @@connect_error_callback
   end
 
+  def self.set_inactivity_error_callback(&block)
+    @@inactivity_error_callback = block
+  end
+
+  def self.inactivity_error_callback
+    @@inactivity_error_callback
+  end
+
   def self.run(name, host, port)
     @@totalcounter = 0
     @@maxcounter = 0
@@ -85,6 +93,7 @@ class ProxyMachine
     @@name = name
     @@listen = "#{host}:#{port}"
     @@connect_error_callback ||= proc { |remote| }
+    @@inactivity_error_callback = proc { |remote| }
     self.update_procline
     EM.epoll
 
@@ -119,5 +128,9 @@ module Kernel
 
   def proxy_connect_error(&block)
     ProxyMachine.set_connect_error_callback(&block)
+  end
+
+  def proxy_inactivity_error(&block)
+    ProxyMachine.set_inactivity_error_callback(&block)
   end
 end
