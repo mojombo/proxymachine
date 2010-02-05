@@ -93,7 +93,7 @@ class ProxyMachine
     @@name = name
     @@listen = "#{host}:#{port}"
     @@connect_error_callback ||= proc { |remote| }
-    @@inactivity_error_callback = proc { |remote| }
+    @@inactivity_error_callback ||= proc { |remote| }
     self.update_procline
     EM.epoll
 
