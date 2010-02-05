@@ -40,15 +40,16 @@ class ProxyMachine
         close_connection unless commands.instance_of?(Hash)
         if remote = commands[:remote]
           m, host, port = *remote.match(/^(.+):(.+)$/)
-          if try_server_connect(host, port.to_i)
-            if data = commands[:data]
-              @buffer = [data]
-            end
-            if reply = commands[:reply]
-              send_data(reply)
-            end
-            send_and_clear_buffer
+          @server_side = ServerConnection.request(host, port, self)
+          if data = commands[:data]
+            @buffer = [data]
           end
+          if reply = commands[:reply]
+            send_data(reply)
+          end
+          @buffer.each { |data| @server_side.send_data(data) }
+          proxy_incoming_to @server_side
+
         elsif close = commands[:close]
           if close == true
             close_connection
@@ -61,34 +62,6 @@ class ProxyMachine
         else
           close_connection
         end
-      end
-    end
-
-    def try_server_connect(host, port)
-      @server_side = ServerConnection.request(host, port, self)
-      proxy_incoming_to(@server_side, 10240)
-      LOGGER.info "Successful connection to #{host}:#{port}."
-      true
-    rescue => e
-      if @tries < 10
-        @tries += 1
-        LOGGER.info "Failed on server connect attempt #{@tries}. Trying again..."
-        @timer.cancel if @timer
-        @timer = EventMachine::Timer.new(0.1) do
-          self.ensure_server_side_connection
-        end
-      else
-        LOGGER.info "Failed after ten connection attempts."
-      end
-      false
-    end
-
-    def send_and_clear_buffer
-      if !@buffer.empty?
-        @buffer.each do |x|
-          @server_side.send_data(x)
-        end
-        @buffer = []
       end
     end
 
