@@ -74,6 +74,7 @@ class ProxyMachine
     def connect_to_server
       fail "connect_server called without remote established" if @remote.nil?
       host, port = @remote
+      LOGGER.info "Establishing new connection with #{host}:#{port}"
       @server_side = ServerConnection.request(host, port, self)
       @server_side.pending_connect_timeout = @connect_timeout
       @server_side.comm_inactivity_timeout = @inactivity_timeout
@@ -83,6 +84,7 @@ class ProxyMachine
     # successfully established. Send any buffer we've accumulated and start
     # raw proxying.
     def server_connection_success
+      LOGGER.info "Successful connection to #{@remote.join(':')}"
       @connected = true
       @buffer.each { |data| @server_side.send_data(data) }
       proxy_incoming_to @server_side
@@ -96,15 +98,17 @@ class ProxyMachine
       @server_side = nil
       if @tries < 10
         @tries += 1
+        LOGGER.info "Retrying connection with #{@remote.join(':')} (##{@tries})"
         EM.add_timer(0.1) { connect_to_server }
       else
-        LOGGER.info "Failed after ten connection attempts."
+        LOGGER.info "Connect #{@remote.join(':')} failed after ten attempts."
         close_connection
         ProxyMachine.connect_error_callback.call(@remote.join(':'))
       end
     end
 
     def server_inactivity_timeout
+      LOGGER.info "Closing #{@remote.join(':')} connection due to inactivity"
       @server_side = nil
       close_connection
       ProxyMachine.inactivity_error_callback.call(@remote.join(':'))
