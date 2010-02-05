@@ -6,14 +6,24 @@ class ProxyMachine
 
     def initialize(conn)
       @client_side = conn
+      @connected = false
     end
 
     def post_init
       proxy_incoming_to(@client_side, 10240)
     end
 
+    def connection_completed
+      @connected = true
+      @client_side.server_connection_success
+    end
+
     def unbind
-      @client_side.close_connection_after_writing
+      if !@connected
+        @client_side.server_connection_failed
+      else
+        @client_side.close_connection_after_writing
+      end
     end
   end
 end

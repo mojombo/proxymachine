@@ -10,7 +10,9 @@ class ProxyMachine
     def post_init
       LOGGER.info "Accepted #{peer}"
       @buffer = []
+      @remote = nil
       @tries = 0
+      @connected = false
       ProxyMachine.incr
     end
 
@@ -23,45 +25,76 @@ class ProxyMachine
     end
 
     def receive_data(data)
-      if !@server_side
+      if !@connected
         @buffer << data
-        ensure_server_side_connection
+        establish_remote_server if @remote.nil?
       end
     rescue => e
       close_connection
       LOGGER.info "#{e.class} - #{e.message}"
     end
 
-    def ensure_server_side_connection
-      @timer.cancel if @timer
-      unless @server_side
-        commands = ProxyMachine.router.call(@buffer.join)
-        LOGGER.info "#{peer} #{commands.inspect}"
-        close_connection unless commands.instance_of?(Hash)
-        if remote = commands[:remote]
-          m, host, port = *remote.match(/^(.+):(.+)$/)
-          @server_side = ServerConnection.request(host, port, self)
-          if data = commands[:data]
-            @buffer = [data]
-          end
-          if reply = commands[:reply]
-            send_data(reply)
-          end
-          @buffer.each { |data| @server_side.send_data(data) }
-          proxy_incoming_to @server_side
 
-        elsif close = commands[:close]
-          if close == true
-            close_connection
-          else
-            send_data(close)
-            close_connection_after_writing
-          end
-        elsif commands[:noop]
-          # do nothing
-        else
-          close_connection
+    # Called when new data is available from the client but no remote
+    # server has been established. If a remote can be established, an
+    # attempt is made to connect and proxy to the remote server.
+    def establish_remote_server
+      fail "establish_remote_server called with remote established" if @remote
+      commands = ProxyMachine.router.call(@buffer.join)
+      LOGGER.info "#{peer} #{commands.inspect}"
+      close_connection unless commands.instance_of?(Hash)
+      if remote = commands[:remote]
+        m, host, port = *remote.match(/^(.+):(.+)$/)
+        @remote = [host, port]
+        if data = commands[:data]
+          @buffer = [data]
         end
+        if reply = commands[:reply]
+          send_data(reply)
+        end
+        connect_to_server
+      elsif close = commands[:close]
+        if close == true
+          close_connection
+        else
+          send_data(close)
+          close_connection_after_writing
+        end
+      elsif commands[:noop]
+        # do nothing
+      else
+        close_connection
+      end
+    end
+
+    # Connect to the remote server
+    def connect_to_server
+      fail "connect_server called without remote established" if @remote.nil?
+      host, port = @remote
+      @server_side = ServerConnection.request(host, port, self)
+    end
+
+    # Called by the server side immediately after the server connection was
+    # successfully established. Send any buffer we've accumulated and start
+    # raw proxying.
+    def server_connection_success
+      @connected = true
+      @buffer.each { |data| @server_side.send_data(data) }
+      proxy_incoming_to @server_side
+    end
+
+    # Called by the server side when a connection could not be established,
+    # either due to a hard connection failure or to a connection timeout.
+    # Leave the client connection open and retry the server connection up to
+    # 10 times.
+    def server_connection_failed
+      @server_side = nil
+      if @tries < 10
+        @tries += 1
+        EM.add_timer(0.1) { connect_to_server }
+      else
+        puts "Failed after ten connection attempts."
+        close_connection
       end
     end
 
