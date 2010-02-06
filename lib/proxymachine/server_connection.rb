@@ -28,9 +28,15 @@ class ProxyMachine
       now = Time.now
       if !@connected
         @client_side.server_connection_failed
-      elsif !@data_received && @timeout > 0.0 && (elapsed = now - @connected) >= @timeout
-        # EM aborted the connection due to an inactivity timeout
-        @client_side.server_inactivity_timeout(@timeout, elapsed)
+      elsif !@data_received
+        if @timeout > 0.0 && (elapsed = now - @connected) >= @timeout
+          # EM aborted the connection due to an inactivity timeout
+          @client_side.server_inactivity_timeout(@timeout, elapsed)
+        else
+          # server disconnected soon after connecting without sending data
+          # treat this like a failed server connection
+          @client_side.server_connection_failed
+        end
       else
         @client_side.close_connection_after_writing
       end
