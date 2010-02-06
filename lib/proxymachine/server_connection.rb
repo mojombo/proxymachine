@@ -8,6 +8,7 @@ class ProxyMachine
       @client_side = conn
       @connected = false
       @data_received = false
+      @timeout = nil
     end
 
     def receive_data(data)
@@ -19,15 +20,17 @@ class ProxyMachine
 
     def connection_completed
       @connected = Time.now
+      @timeout = comm_inactivity_timeout || 0.0
       @client_side.server_connection_success
     end
 
     def unbind
+      now = Time.now
       if !@connected
         @client_side.server_connection_failed
-      elsif !@data_received && (Time.now - @connected) >= comm_inactivity_timeout
+      elsif !@data_received && @timeout > 0.0 && (elapsed = now - @connected) >= @timeout
         # EM aborted the connection due to an inactivity timeout
-        @client_side.server_inactivity_timeout
+        @client_side.server_inactivity_timeout(@timeout, elapsed)
       else
         @client_side.close_connection_after_writing
       end

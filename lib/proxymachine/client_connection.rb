@@ -107,8 +107,12 @@ class ProxyMachine
       end
     end
 
-    def server_inactivity_timeout
-      LOGGER.info "Closing #{@remote.join(':')} connection due to inactivity"
+    # Called by the server when an inactivity timeout is detected. The timeout
+    # argument is the configured inactivity timeout in seconds as a float; the
+    # elapsed argument is the amount of time that actually elapsed since
+    # connecting but not receiving any data.
+    def server_inactivity_timeout(timeout, elapsed)
+      LOGGER.info "Disconnecting #{@remote.join(':')} after #{elapsed}s of inactivity (> #{timeout.inspect})"
       @server_side = nil
       close_connection
       ProxyMachine.inactivity_error_callback.call(@remote.join(':'))
