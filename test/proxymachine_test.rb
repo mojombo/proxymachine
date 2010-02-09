@@ -8,6 +8,14 @@ def assert_proxy(host, port, send, recv)
 end
 
 class ProxymachineTest < Test::Unit::TestCase
+  def setup
+    @proxy_error_file = "#{File.dirname(__FILE__)}/proxy_error"
+  end
+
+  def teardown
+    File.unlink(@proxy_error_file) rescue nil
+  end
+
   should "handle simple routing" do
     assert_proxy('localhost', 9990, 'a', '9980:a')
     assert_proxy('localhost', 9990, 'b', '9981:b')
@@ -39,5 +47,14 @@ class ProxymachineTest < Test::Unit::TestCase
     sock.write('f')
     assert_equal '9980:' + 'e' * 2048 + 'f', sock.read
     sock.close
+  end
+
+  should "call proxy_connect_error when a connection is rejected" do
+    sock = TCPSocket.new('localhost', 9990)
+    sock.write('connect reject')
+    sock.flush
+    assert_equal "", sock.read
+    sock.close
+    assert_equal "connect error: localhost:9989", File.read(@proxy_error_file)
   end
 end
