@@ -57,4 +57,15 @@ class ProxymachineTest < Test::Unit::TestCase
     sock.close
     assert_equal "connect error: localhost:9989", File.read(@proxy_error_file)
   end
+
+  should "call proxy_inactivity_error when initial read times out" do
+    sock = TCPSocket.new('localhost', 9990)
+    sent = Time.now
+    sock.write('inactivity')
+    sock.flush
+    assert_equal "", sock.read
+    assert_operator Time.now - sent, :>=, 1.0
+    assert_equal "activity error: localhost:9980", File.read(@proxy_error_file)
+    sock.close
+  end
 end

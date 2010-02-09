@@ -17,6 +17,7 @@ module EventMachine
       end
 
       def receive_data(data)
+        sleep $1.to_f if data =~ /^sleep (.*)/
         send_data("#{@@port}:#{data}")
         close_connection_after_writing
       end
