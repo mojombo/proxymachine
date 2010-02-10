@@ -68,4 +68,12 @@ class ProxymachineTest < Test::Unit::TestCase
     assert_equal "activity error: localhost:9980", File.read(@proxy_error_file)
     sock.close
   end
+
+  should "not consider client disconnect a server error" do
+    sock = TCPSocket.new('localhost', 9990)
+    sock.write('inactivity')
+    sock.close
+    sleep 3.1
+    assert !File.exist?(@proxy_error_file)
+  end
 end

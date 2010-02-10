@@ -26,7 +26,12 @@ class ProxyMachine
 
     def unbind
       now = Time.now
-      if !@connected
+      if @client_side.error?
+        # the client side disconnected while we were in progress with
+        # the server. do nothing.
+        LOGGER.info "Client closed while server connection in progress. Dropping."
+      elsif !@connected
+        # a connection error or timeout occurred
         @client_side.server_connection_failed
       elsif !@data_received
         if @timeout > 0.0 && (elapsed = now - @connected) >= @timeout
