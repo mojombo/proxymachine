@@ -1,3 +1,7 @@
+= 1.2.1 / 2010-02-11
+  * Bug fixes
+    * Don't count client closes as connection errors
+
 = 1.2.0 / 2010-02-09
   * New Features
     * Connection Errors and Timeouts
