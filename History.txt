@@ -1,3 +1,7 @@
+= 1.2.2 / 2010-02-19
+  * Bug fixes
+    * Bring back the buffer limit
+
 = 1.2.1 / 2010-02-11
   * Bug fixes
     * Don't count client closes as connection errors
