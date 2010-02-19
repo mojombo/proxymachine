@@ -15,7 +15,7 @@ class ProxyMachine
       fail "receive_data called after raw proxy enabled" if @data_received
       @data_received = true
       @client_side.send_data(data)
-      proxy_incoming_to @client_side
+      proxy_incoming_to @client_side, 10240
     end
 
     def connection_completed
