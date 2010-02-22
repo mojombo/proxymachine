@@ -97,7 +97,11 @@ class ProxyMachine
     # 10 times.
     def server_connection_failed
       @server_side = nil
-      if @tries < 10
+      if @connected
+        LOGGER.error "Connection with #{@remote.join(':')} was terminated prematurely."
+        close_connection
+        ProxyMachine.connect_error_callback.call(@remote.join(':'))
+      elsif @tries < 10
         @tries += 1
         LOGGER.warn "Retrying connection with #{@remote.join(':')} (##{@tries})"
         EM.add_timer(0.1) { connect_to_server }
