@@ -33,7 +33,7 @@ class ProxyMachine
       end
     rescue => e
       close_connection
-      LOGGER.info "#{e.class} - #{e.message}"
+      LOGGER.error "#{e.class} - #{e.message}"
     end
 
     # Called when new data is available from the client but no remote
@@ -99,10 +99,10 @@ class ProxyMachine
       @server_side = nil
       if @tries < 10
         @tries += 1
-        LOGGER.info "Retrying connection with #{@remote.join(':')} (##{@tries})"
+        LOGGER.warn "Retrying connection with #{@remote.join(':')} (##{@tries})"
         EM.add_timer(0.1) { connect_to_server }
       else
-        LOGGER.info "Connect #{@remote.join(':')} failed after ten attempts."
+        LOGGER.error "Connect #{@remote.join(':')} failed after ten attempts."
         close_connection
         ProxyMachine.connect_error_callback.call(@remote.join(':'))
       end
@@ -113,7 +113,7 @@ class ProxyMachine
     # elapsed argument is the amount of time that actually elapsed since
     # connecting but not receiving any data.
     def server_inactivity_timeout(timeout, elapsed)
-      LOGGER.info "Disconnecting #{@remote.join(':')} after #{elapsed}s of inactivity (> #{timeout.inspect})"
+      LOGGER.error "Disconnecting #{@remote.join(':')} after #{elapsed}s of inactivity (> #{timeout.inspect})"
       @server_side = nil
       close_connection
       ProxyMachine.inactivity_error_callback.call(@remote.join(':'))
