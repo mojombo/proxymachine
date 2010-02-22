@@ -87,6 +87,7 @@ class ProxyMachine
       LOGGER.info "Successful connection to #{@remote.join(':')}"
       @connected = true
       @buffer.each { |data| @server_side.send_data(data) }
+      @buffer = []
       proxy_incoming_to(@server_side, 10240)
     end
 
