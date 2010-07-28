@@ -49,6 +49,22 @@ class ProxyMachine
     @@router
   end
 
+  def self.set_greeting(greeting)
+    @@greeting = greeting
+  end
+
+  def self.greeting
+    @@greeting
+  end
+
+  def self.set_relay(block)
+    @@relay = block
+  end
+
+  def self.relay
+    @@relay
+  end
+
   def self.graceful_shutdown(signal)
     EM.stop_server($server) if $server
     LOGGER.info "Received #{signal} signal. No longer accepting new connections."
@@ -94,6 +110,8 @@ class ProxyMachine
     @@listen = "#{host}:#{port}"
     @@connect_error_callback ||= proc { |remote| }
     @@inactivity_error_callback ||= proc { |remote| }
+    @@greeting ||= nil
+    @@relay ||= nil
     self.update_procline
     EM.epoll
 
@@ -122,6 +140,14 @@ class ProxyMachine
 end
 
 module Kernel
+  def client_greeting(message)
+    ProxyMachine.set_greeting(message)
+  end
+
+  def server_relay(&block)
+    ProxyMachine.set_relay(block)
+  end
+
   def proxy(&block)
     ProxyMachine.set_router(block)
   end

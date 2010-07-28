@@ -16,6 +16,7 @@ class ProxyMachine
       @connect_timeout = nil
       @inactivity_timeout = nil
       ProxyMachine.incr
+      send_data(ProxyMachine.greeting) if ProxyMachine.greeting
     end
 
     def peer

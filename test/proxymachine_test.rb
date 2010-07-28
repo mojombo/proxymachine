@@ -40,6 +40,10 @@ class ProxymachineTest < Test::Unit::TestCase
     assert_proxy('localhost', 9990, 'g', 'g3-9980:g2')
   end
 
+  should "handle getting modified data back" do
+    assert_proxy('localhost', 9990, 'server_relay', '9980:proxy_modified')
+  end
+
   should "handle noop" do
     sock = TCPSocket.new('localhost', 9990)
     sock.write('e' * 2048)
