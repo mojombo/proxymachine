@@ -107,7 +107,7 @@ Valid return values
 
 `{ :remote => String }` - String is the host:port of the backend server that will be proxied.  
 `{ :remote => String, :data => String }` - Same as above, but send the given data instead.  
-`{ :remote => String, :data => String, :reply => String }` - Same as above, but reply with given data back to the client
+`{ :remote => String, :data => String, :reply => String }` - Same as above, but reply with given data back to the client  
 `{ :noop => true }` - Do nothing.  
 `{ :close => true }` - Close the connection.  
 `{ :close => String }` - Close the connection after sending the String.  
@@ -176,8 +176,8 @@ to the client:
 Valid Return Values for Server Relay
 ------------------------------------
 
-`{ :proxy => String }` - String is the data to be sent to the client before proxying is enabled
-`{ :noop => true }` - Do nothing.
+`{ :proxy => String }` - String is the data to be sent to the client before proxying is enabled  
+`{ :noop => true }` - Do nothing.  
 
 Contribute
 ----------
