@@ -43,6 +43,10 @@ class ProxyMachine
     def establish_remote_server
       fail "establish_remote_server called with remote established" if @remote
       commands = ProxyMachine.router.call(@buffer.join)
+      dispatch_remote_server_commands(commands)
+    end
+
+    def dispatch_remote_server_commands(commands)
       LOGGER.info "#{peer} #{commands.inspect}"
       close_connection unless commands.instance_of?(Hash)
       if remote = commands[:remote]
