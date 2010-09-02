@@ -173,6 +173,19 @@ to the client:
       { :proxy => data.gsub(/^220.*?\r?\n/, '') }
     end
 
+Client Greeting
+---------------
+
+`client_greeting` is used to present the client with a banner on connection.
+Protocols including SMTP and SSH must send a greeting to the client before
+the client will send any data.
+
+Server Relay
+------------
+
+`server_relay` is used to filter the real greeting from the server so it 
+isn't sent back to the client.
+
 Valid Return Values for Server Relay
 ------------------------------------
 
