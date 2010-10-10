@@ -26,6 +26,7 @@ require File.expand_path('../configs/simple', __FILE__)
 class PMTest < Test::Unit::TestCase
 
   def harikari(ppid)
+    trap(:INT) { EM.stop }
     Thread.new do
       sleep 1 while Process.kill(0, ppid) rescue nil
       exit
@@ -40,7 +41,6 @@ class PMTest < Test::Unit::TestCase
     # Start the simple proxymachine
     @cpids << fork do
       harikari(ppid)
-      trap(:INT) { EM.stop }
       ProxyMachine.run('simple', localhost, 9990)
     end
 
@@ -49,7 +49,6 @@ class PMTest < Test::Unit::TestCase
       @cpids << fork do
         harikari(ppid)
         EM.run do
-          trap(:INT) { EM.stop }
           EventMachine::Protocols::TestConnection.start(localhost, port)
         end
       end
