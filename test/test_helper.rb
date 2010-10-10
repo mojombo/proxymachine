@@ -55,7 +55,7 @@ class PMTest < Test::Unit::TestCase
     end
 
     # Make sure processes have enough time to start
-    sleep 0.05
+    sleep 0.02
 
     super
 
