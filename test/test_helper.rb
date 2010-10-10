@@ -21,31 +21,14 @@ module EventMachine
   end
 end
 
-def harikari(ppid)
-  Thread.new do
-    loop do
-      begin
-        Process.kill(0, ppid)
-      rescue
-        exit
-      end
-      sleep 1
-    end
-  end
-end
+require File.expand_path('../configs/simple', __FILE__)
 
 class PMTest < Test::Unit::TestCase
 
   def harikari(ppid)
     Thread.new do
-      loop do
-        begin
-          Process.kill(0, ppid)
-        rescue
-          exit
-        end
-        sleep 1
-      end
+      sleep 1 while Process.kill(0, ppid) rescue nil
+      exit
     end
   end
 
@@ -57,7 +40,6 @@ class PMTest < Test::Unit::TestCase
     # Start the simple proxymachine
     @cpids << fork do
       harikari(ppid)
-      load(File.join(File.dirname(__FILE__), *%w[configs simple.rb]))
       trap(:INT) { EM.stop }
       ProxyMachine.run('simple', localhost, 9990)
     end
@@ -77,13 +59,14 @@ class PMTest < Test::Unit::TestCase
     sleep 0.05
 
     super
+
   ensure
     @cpids.each do |pid|
       Process.kill(:INT, pid)
       Process.waitpid(pid)
     end
   end
-  
+
   def test_sanity
     assert_equal 3, @cpids.size
   end
