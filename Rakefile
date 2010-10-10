@@ -18,14 +18,17 @@ end
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
+  test.ruby_opts << '-rubygems'
   test.libs << 'lib' << 'test'
   test.pattern = 'test/**/*_test.rb'
+  test.warning = true
   test.verbose = true
 end
 
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
+    test.ruby_opts << '-rubygems'
     test.libs << 'test'
     test.pattern = 'test/**/*_test.rb'
     test.verbose = true
