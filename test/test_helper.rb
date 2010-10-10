@@ -52,3 +52,12 @@ end
     end
   end
 end
+
+class PMTest < Test::Unit::TestCase
+  def assert_proxy(host, port, send, recv)
+    sock = TCPSocket.new(host, port)
+    sock.write(send)
+    assert_equal recv, sock.read
+    sock.close
+  end
+end

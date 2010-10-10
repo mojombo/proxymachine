@@ -1,13 +1,6 @@
 require 'test_helper'
 
-def assert_proxy(host, port, send, recv)
-  sock = TCPSocket.new(host, port)
-  sock.write(send)
-  assert_equal recv, sock.read
-  sock.close
-end
-
-class ProxymachineTest < Test::Unit::TestCase
+class ProxymachineTest < PMTest
   def setup
     @proxy_error_file = "#{File.dirname(__FILE__)}/proxy_error"
   end
