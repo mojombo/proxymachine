@@ -25,7 +25,26 @@ require File.expand_path('../configs/simple', __FILE__)
 
 class PMTest < Test::Unit::TestCase
 
-  def harikari(ppid)
+  def self.servers
+    @servers ||= {}
+  end
+
+  def self.spawn(&block)
+    ppid = Process.pid
+    pid  = fork { harikari(ppid); block.call }
+
+    servers[pid] = block
+  end
+
+  def self.respawn
+    alive   = servers.keys.find_all { |pid| Process.kill(0, pid) rescue nil }
+    dead    = servers.keys - alive
+    respawn = dead.map { |pid| servers.delete(pid) }
+
+    respawn.each { |block| spawn(&block) }
+  end
+
+  def self.harikari(ppid)
     trap(:INT) { EM.stop }
     Thread.new do
       sleep 1 while Process.kill(0, ppid) rescue nil
@@ -33,42 +52,19 @@ class PMTest < Test::Unit::TestCase
     end
   end
 
-  def run(*)
-    localhost = '127.0.0.1'
-    ppid = Process.pid
-    @cpids = []
-
-    # Start the simple proxymachine
-    @cpids << fork do
-      harikari(ppid)
-      ProxyMachine.run('simple', localhost, 9990)
-    end
-
-    # Start two test daemons
-    [9980, 9981].each do |port|
-      @cpids << fork do
-        harikari(ppid)
-        EM.run do
-          EventMachine::Protocols::TestConnection.start(localhost, port)
-        end
-      end
-    end
-
-    # Make sure processes have enough time to start
-    sleep 0.02
-
-    super
-
-  ensure
-    @cpids.each do |pid|
+  at_exit do
+    servers.keys.each do |pid|
       Process.kill(:INT, pid)
       Process.waitpid(pid)
     end
   end
 
-  def test_sanity
-    assert_equal 3, @cpids.size
+  def run(*)
+    self.class.respawn
+    super
   end
+
+  def test_dummy; end
 
   def assert_proxy(host, port, send, recv)
     sock = TCPSocket.new(host, port)

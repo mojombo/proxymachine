@@ -1,6 +1,16 @@
 require 'test_helper'
 
 class ProxymachineTest < PMTest
+  localhost = '127.0.0.1'
+
+  spawn { ProxyMachine.run('simple', localhost, 9990) }
+
+  [9980, 9981].each do |port|
+    spawn do
+      EM.run {EventMachine::Protocols::TestConnection.start(localhost, port)}
+    end
+  end
+
   def setup
     @proxy_error_file = "#{File.dirname(__FILE__)}/proxy_error"
   end
