@@ -34,26 +34,60 @@ def harikari(ppid)
   end
 end
 
-ppid = Process.pid
+class PMTest < Test::Unit::TestCase
 
-# Start the simple proxymachine
-fork do
-  harikari(ppid)
-  load(File.join(File.dirname(__FILE__), *%w[configs simple.rb]))
-  ProxyMachine.run('simple', 'localhost', 9990)
-end
-
-# Start two test daemons
-[9980, 9981].each do |port|
-  fork do
-    harikari(ppid)
-    EM.run do
-      EventMachine::Protocols::TestConnection.start('localhost', port)
+  def harikari(ppid)
+    Thread.new do
+      loop do
+        begin
+          Process.kill(0, ppid)
+        rescue
+          exit
+        end
+        sleep 1
+      end
     end
   end
-end
 
-class PMTest < Test::Unit::TestCase
+  def run(*)
+    localhost = '127.0.0.1'
+    ppid = Process.pid
+    @cpids = []
+
+    # Start the simple proxymachine
+    @cpids << fork do
+      harikari(ppid)
+      load(File.join(File.dirname(__FILE__), *%w[configs simple.rb]))
+      trap(:INT) { EM.stop }
+      ProxyMachine.run('simple', localhost, 9990)
+    end
+
+    # Start two test daemons
+    [9980, 9981].each do |port|
+      @cpids << fork do
+        harikari(ppid)
+        EM.run do
+          trap(:INT) { EM.stop }
+          EventMachine::Protocols::TestConnection.start(localhost, port)
+        end
+      end
+    end
+
+    # Make sure processes have enough time to start
+    sleep 0.05
+
+    super
+  ensure
+    @cpids.each do |pid|
+      Process.kill(:INT, pid)
+      Process.waitpid(pid)
+    end
+  end
+  
+  def test_sanity
+    assert_equal 3, @cpids.size
+  end
+
   def assert_proxy(host, port, send, recv)
     sock = TCPSocket.new(host, port)
     sock.write(send)
