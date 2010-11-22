@@ -8,7 +8,7 @@ require 'json'
 
 class BeeRouter
 
-  @backends = {"1.smeg.com" => ["localhost:8081", "localhost:8080"], "2.smeg.com" => "localhost:8080"}
+  @backends = {"1.smeg.com" => ["localhost:8081", "localhost:8080"], "2.smeg.com" => "localhost:8081"}
   
   def self.get_backend host
 
@@ -57,6 +57,8 @@ proxy_connect_error do |remote|
   puts "OHNOES! error connecting to #{remote}"
   puts "Now removing it"
   BeeRouter.remove_backend(remote)
+  true #to force it to recheck rather than give up - could possibly reset the retry counter and rely on this?
+  #or we return multiple remotes...
 end
 
 
