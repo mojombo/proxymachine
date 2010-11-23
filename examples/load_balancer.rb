@@ -36,12 +36,6 @@ end
 
 
 proxy do |data|
-  # p data
-  #data =~ %r{^Host\:([a-z]+)\n }
-  #Host: bar.something.com:9999
-  #puts data
-  #puts "MATCH: " + $1
- # { :remote => "www.unsw.edu.au:80" }
 
   if data =~ %r{^Host:(.*)}
     name = $1
