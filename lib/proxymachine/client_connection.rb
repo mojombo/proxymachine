@@ -107,8 +107,8 @@ class ProxyMachine
         EM.add_timer(0.1) { connect_to_server }
       else
         LOGGER.error "Connect #{@remote.join(':')} failed after ten attempts."
-        if ProxyMachine.connect_error_callback.call(@remote.join(':')) and @tries < 11
-          @tries += 1
+        if ProxyMachine.connect_error_callback.call(@remote.join(':')) == true
+          @tries = 0
           LOGGER.info "Will try and re-establish to another back end"
           @remote = nil
           establish_remote_server
