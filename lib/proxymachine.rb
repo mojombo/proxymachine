@@ -9,6 +9,8 @@ require 'proxymachine/server_connection'
 LOGGER = Logger.new(STDOUT)
 
 class ProxyMachine
+  VERSION = '1.2.4'
+
   MAX_FAST_SHUTDOWN_SECONDS = 10
 
   def self.update_procline
@@ -110,15 +112,6 @@ class ProxyMachine
       end
     end
   end
-
-  def self.version
-    yml = YAML.load(File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION.yml])))
-    "#{yml[:major]}.#{yml[:minor]}.#{yml[:patch]}"
-  rescue
-    'unknown'
-  end
-
-  VERSION = self.version
 end
 
 module Kernel
