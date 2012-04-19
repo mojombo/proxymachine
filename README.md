@@ -155,6 +155,27 @@ of data from an already connected server:
 If no `:inactivity_timeout` is provided, the `proxy_inactivity_error`
 callback is never triggered.
 
+Periodic Timers
+---------------
+
+You can register blocks to be run at regular intervals
+
+    periodic 5 do
+      puts "Runs every 5 seconds"
+    end
+
+This is actually just a thin wrapper around `EventMachine::PeriodicTimer`,
+which gets passed to your block. This allows you to cancel the timer or modify
+its interval dynamically
+
+    periodic 1 do |timer|
+      timer.interval += 1
+      puts "Tick. Next tick in #{timer.interval}"
+    end
+
+If you're running blocking code within a periodic block, you should consider
+wrapping it in an EM.defer.
+
 Contribute
 ----------
 

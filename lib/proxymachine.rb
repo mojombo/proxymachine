@@ -88,6 +88,11 @@ class ProxyMachine
     @@inactivity_error_callback
   end
 
+  def self.add_periodic(interval, &block)
+    @@periodic_callbacks ||= []
+    @@periodic_callbacks << [interval, block]
+  end
+
   def self.run(name, host, port)
     @@totalcounter = 0
     @@maxcounter = 0
@@ -96,6 +101,7 @@ class ProxyMachine
     @@listen = "#{host}:#{port}"
     @@connect_error_callback ||= proc { |remote| }
     @@inactivity_error_callback ||= proc { |remote| }
+    @@periodic_callbacks ||= []
     self.update_procline
     EM.epoll
 
@@ -109,6 +115,11 @@ class ProxyMachine
       end
       trap('INT') do
         self.fast_shutdown('INT')
+      end
+      @@periodic_callbacks.each do |interval, block|
+        t = EM.add_periodic_timer(interval) do
+          block.call(t)
+        end
       end
     end
   end
@@ -125,5 +136,9 @@ module Kernel
 
   def proxy_inactivity_error(&block)
     ProxyMachine.set_inactivity_error_callback(&block)
+  end
+
+  def periodic(interval, &block)
+    ProxyMachine.add_periodic(interval, &block)
   end
 end
