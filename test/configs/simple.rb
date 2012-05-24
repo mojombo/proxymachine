@@ -19,9 +19,15 @@ proxy do |data|
     { :remote => "localhost:9989" }
   elsif data == 'inactivity'
     { :remote => "localhost:9980", :data => 'sleep 3', :inactivity_timeout => 1 }
+  elsif data == 'server_relay'
+    { :remote => "localhost:9980" }
   else
     { :close => true }
   end
+end
+
+server_relay do |data|
+  { :proxy => data.gsub(/server_relay/, 'proxy_modified') }
 end
 
 ERROR_FILE = File.expand_path('../../proxy_error', __FILE__)

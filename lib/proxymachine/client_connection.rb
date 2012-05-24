@@ -16,6 +16,7 @@ class ProxyMachine
       @connect_timeout = nil
       @inactivity_timeout = nil
       ProxyMachine.incr
+      send_data(ProxyMachine.greeting) if ProxyMachine.greeting
     end
 
     def peer
@@ -41,18 +42,26 @@ class ProxyMachine
     # attempt is made to connect and proxy to the remote server.
     def establish_remote_server
       fail "establish_remote_server called with remote established" if @remote
-      commands = ProxyMachine.router.call(@buffer.join)
+      commands = dispatch_router(@buffer.join)
+      dispatch_remote_server_commands(commands)
+    end
+
+    def dispatch_router(data)
+      ProxyMachine.router.call(data)
+    end
+
+    def dispatch_remote_server_commands(commands)
       LOGGER.info "#{peer} #{commands.inspect}"
       close_connection unless commands.instance_of?(Hash)
+      if data = commands[:data]
+        @buffer = [data]
+      end
+      if reply = commands[:reply]
+        send_data(reply)
+      end
       if remote = commands[:remote]
         m, host, port = *remote.match(/^(.+):(.+)$/)
         @remote = [host, port]
-        if data = commands[:data]
-          @buffer = [data]
-        end
-        if reply = commands[:reply]
-          send_data(reply)
-        end
         @connect_timeout = commands[:connect_timeout]
         @inactivity_timeout = commands[:inactivity_timeout]
         connect_to_server
@@ -63,7 +72,7 @@ class ProxyMachine
           send_data(close)
           close_connection_after_writing
         end
-      elsif commands[:noop]
+      elsif commands[:noop] || commands[:data] || commands[:reply]
         # do nothing
       else
         close_connection

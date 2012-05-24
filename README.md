@@ -107,7 +107,7 @@ Valid return values
 
 `{ :remote => String }` - String is the host:port of the backend server that will be proxied.  
 `{ :remote => String, :data => String }` - Same as above, but send the given data instead.  
-`{ :remote => String, :data => String, :reply => String}` - Same as above, but reply with given data back to the client
+`{ :remote => String, :data => String, :reply => String }` - Same as above, but reply with given data back to the client  
 `{ :noop => true }` - Do nothing.  
 `{ :close => true }` - Close the connection.  
 `{ :close => String }` - Close the connection after sending the String.  
@@ -154,6 +154,43 @@ of data from an already connected server:
 
 If no `:inactivity_timeout` is provided, the `proxy_inactivity_error`
 callback is never triggered.
+
+Client Greeting and Server Relay
+--------------------------------
+
+Some protocols such as SMTP require a greeting to be sent before the client
+sends any data. The server being proxied to would also likely be sending such
+a greeting, which would need to be stripped from the output being sent back
+to the client:
+
+    client_greeting "220 mx.google.com ESMTP n2sm7419324wfl.1\r\n"
+
+    proxy do |data|
+      { :remote => "mail.gmail.com:25" }
+    end
+
+    server_relay do |data|
+      { :proxy => data.gsub(/^220.*?\r?\n/, '') }
+    end
+
+Client Greeting
+---------------
+
+`client_greeting` is used to present the client with a banner on connection.
+Protocols including SMTP and SSH must send a greeting to the client before
+the client will send any data.
+
+Server Relay
+------------
+
+`server_relay` is used to filter the real greeting from the server so it 
+isn't sent back to the client.
+
+Valid Return Values for Server Relay
+------------------------------------
+
+`{ :proxy => String }` - String is the data to be sent to the client before proxying is enabled  
+`{ :noop => true }` - Do nothing.  
 
 Contribute
 ----------
