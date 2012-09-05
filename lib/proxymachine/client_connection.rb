@@ -11,6 +11,7 @@ class ProxyMachine
       LOGGER.info "Accepted #{peer}"
       @buffer = []
       @remote = nil
+      @local_bind = [nil,nil]
       @tries = 0
       @connected = false
       @connect_timeout = nil
@@ -47,8 +48,19 @@ class ProxyMachine
       if remote = commands[:remote]
         m, host, port = *remote.match(/^(.+):(.+)$/)
         @remote = [host, port]
+        if local_bind = commands[:local_bind]
+          m,bind_addr,bind_port=*local_bind.match(/([^:]+):?(\d*)/)
+          if bind_addr.empty?
+            bind_addr=nil
+          end
+          if bind_port.empty?
+            bind_port=nil
+          end
+          @local_bind=[bind_addr,bind_port]
+        end
         if data = commands[:data]
           @buffer = [data]
+
         end
         if reply = commands[:reply]
           send_data(reply)
@@ -74,8 +86,9 @@ class ProxyMachine
     def connect_to_server
       fail "connect_server called without remote established" if @remote.nil?
       host, port = @remote
+      bind_addr,bind_port = @local_bind
       LOGGER.info "Establishing new connection with #{host}:#{port}"
-      @server_side = ServerConnection.request(host, port, self)
+      @server_side = ServerConnection.request(host, port, self,bind_addr,bind_port)
       @server_side.pending_connect_timeout = @connect_timeout
       @server_side.comm_inactivity_timeout = @inactivity_timeout
     end
