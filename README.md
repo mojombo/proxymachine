@@ -87,6 +87,16 @@ Example routing config file
       end
     end
 
+Example on multi-homed hosts, use same outgoing IP as inbound
+_____________________________________________________________
+
+    proxy do |data,local_ip,local_port|
+      # p datai
+      { :remote => "127.0.0.1:31337",
+        :local_bind =>"#{local_ip}",
+      }
+    end
+
 
 Example SOCKS4 Proxy in 7 Lines
 -------------------------------
@@ -106,6 +116,7 @@ Valid return values
 -------------------
 
 `{ :remote => String }` - String is the host:port of the backend server that will be proxied.  
+`{ :remote => String, :local_bind => String }` - Same as above, but specify local host:port to bind to.
 `{ :remote => String, :data => String }` - Same as above, but send the given data instead.  
 `{ :remote => String, :data => String, :reply => String}` - Same as above, but reply with given data back to the client
 `{ :noop => true }` - Do nothing.  

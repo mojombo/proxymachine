@@ -11,6 +11,7 @@ class ProxyMachine
       LOGGER.info "Accepted #{peer}"
       @buffer = []
       @remote = nil
+      @local_bind = [nil,nil]
       @tries = 0
       @connected = false
       @connect_timeout = nil
@@ -41,14 +42,27 @@ class ProxyMachine
     # attempt is made to connect and proxy to the remote server.
     def establish_remote_server
       fail "establish_remote_server called with remote established" if @remote
-      commands = ProxyMachine.router.call(@buffer.join)
+      #TODO: Add a test case for passing peer name
+      local_port, local_ip = Socket.unpack_sockaddr_in(get_sockname)
+      commands = ProxyMachine.router.call(@buffer.join,local_ip,local_port)
       LOGGER.info "#{peer} #{commands.inspect}"
       close_connection unless commands.instance_of?(Hash)
       if remote = commands[:remote]
         m, host, port = *remote.match(/^(.+):(.+)$/)
         @remote = [host, port]
+        if local_bind = commands[:local_bind]
+          m,bind_addr,bind_port=*local_bind.match(/([^:]+):?(\d*)/)
+          if bind_addr.empty?
+            bind_addr=nil
+          end
+          if bind_port.empty?
+            bind_port=nil
+          end
+          @local_bind=[bind_addr,bind_port]
+        end
         if data = commands[:data]
           @buffer = [data]
+
         end
         if reply = commands[:reply]
           send_data(reply)
@@ -74,8 +88,9 @@ class ProxyMachine
     def connect_to_server
       fail "connect_server called without remote established" if @remote.nil?
       host, port = @remote
+      bind_addr,bind_port = @local_bind
       LOGGER.info "Establishing new connection with #{host}:#{port}"
-      @server_side = ServerConnection.request(host, port, self)
+      @server_side = ServerConnection.request(host, port, self,bind_addr,bind_port)
       @server_side.pending_connect_timeout = @connect_timeout
       @server_side.comm_inactivity_timeout = @inactivity_timeout
     end

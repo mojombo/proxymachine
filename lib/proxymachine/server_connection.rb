@@ -1,7 +1,15 @@
+#require 'pry'
 class ProxyMachine
   class ServerConnection < EventMachine::Connection
-    def self.request(host, port, client_side)
-      EventMachine.connect(host, port, self, client_side)
+    def self.request(host, port, client_side,bind_addr=nil,bind_port=nil)
+     # binding.pry
+      #LOGGER.debug "Local bind: #{bind_addr} #{bind_port}"
+      if bind_addr or bind_port then 
+        LOGGER.info "Local bind: #{bind_addr} #{bind_port}"
+      else
+        LOGGER.debug "No local binding specified" #FIXME: remove this
+      end
+      EventMachine.bind_connect(bind_addr,bind_port,host, port, self, client_side)
     end
 
     def initialize(conn)

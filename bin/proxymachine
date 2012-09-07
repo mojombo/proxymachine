@@ -30,7 +30,10 @@ EOF
   end
 
   opts.parse!
-
+  if options[:config].nil? then
+	puts opts
+	exit
+  end
   load(options[:config])
   name = options[:config].split('/').last.chomp('.rb')
   ProxyMachine.run(name, options[:host], options[:port])
@@ -43,3 +46,4 @@ rescue Exception => e
     LOGGER.info e.backtrace.join("\n")
   end
 end
+
