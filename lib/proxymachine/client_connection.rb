@@ -45,7 +45,7 @@ class ProxyMachine
       LOGGER.info "#{peer} #{commands.inspect}"
       close_connection unless commands.instance_of?(Hash)
       if remote = commands[:remote]
-        m, host, port = *remote.match(/^(.+):(.+)$/)
+        host, port = remote.split(':', 2)
         @remote = [host, port]
         if data = commands[:data]
           @buffer = [data]
