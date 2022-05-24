@@ -1,6 +1,6 @@
-## This is the rakegem gemspec template. Make sure you read and understand
-## all of the comments. Some sections require modification, and others can
-## be deleted if you don't need them. Once you understand the contents of
+## This is the rakegem gemspec template. Make sure you read and understandFLARE_KEY=qPeVGLqO4irObrAY4eDYiz5hho2Uk9iP
+## aFLARE_KEY=qPeVGLqO4irObrAY4eDYiz5hho2Uk9iPll of the comments. Some sections require modification, and others can
+## be deleted if you don't FLARE_KEY=qPeVGLqO4irObrAY4eDFLARE_KEY=qPeVGLqO4irObrAY4eDYiz5hho2Uk9iPYiz5hho2Uk9iPneed them. Once you understand the contents of
 ## this file, feel free to delete any comments that begin with two hash marks.
 ## You can find comprehensive Gem::Specification documentation, at
 ## http://docs.rubygems.org/read/chapter/20
